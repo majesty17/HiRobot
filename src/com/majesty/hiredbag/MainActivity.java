@@ -2,13 +2,13 @@ package com.majesty.hiredbag;
 
 import java.util.List;
 
+import com.majesty.hiredbag.utils.LogUtils;
+
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.provider.Settings;
 import android.view.accessibility.AccessibilityManager;
@@ -33,6 +33,7 @@ public class MainActivity extends Activity
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.click_func:
+		    //开启无障碍服务设置页面
 			Intent killIntent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
 			startActivity(killIntent);
 			break;
@@ -50,6 +51,7 @@ public class MainActivity extends Activity
 		List<AccessibilityServiceInfo> accessibilityServices = accessibilityManager
 				.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC);
 		for (AccessibilityServiceInfo info : accessibilityServices) {
+		    LogUtils.e("Find a service:"+info.getId());
 			if (info.getId().equals(getPackageName() + "/.RobotService")) {
 				return true;
 			}
@@ -59,6 +61,7 @@ public class MainActivity extends Activity
 
 	@Override
 	public void onAccessibilityStateChanged(boolean enabled) {
+	    //根据服务可用与否，调整按钮文字
 		if (isServiceEnabled()) {
 			clickBtn.setText("关闭辅助");
 		} else {
