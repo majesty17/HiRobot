@@ -45,13 +45,16 @@ public class RobotService extends AccessibilityService {
     }
 
     /***
-     * 这里监听三种类型的事件 主要逻辑: 1,窗口内容变化 如果类名为聊天窗，则获取红包 如果诶名为联系人列表，则进入聊天
-     * 2,打开弹窗，菜单，对话框事件 如果是红包窗，则试图打开 3,通知栏事件 进入监听通知函数
+     * 这里监听三种类型的事件 主要逻辑: 
+     * 1,窗口内容变化 如果类名为聊天窗，则获取红包 如果诶名为联系人列表，则进入聊天
+     * 2,打开弹窗，菜单，对话框事件 如果是红包窗，则试图打开
+     * 3,通知栏事件 进入监听通知函数
      */
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         int eventType = event.getEventType();
+        LogUtils.e("has an event: "+event.toString());
         switch (eventType) {
         case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
             if (currentClassName.equals(CHAT_CLASS_NAME)) {
@@ -113,7 +116,11 @@ public class RobotService extends AccessibilityService {
     }
 
     /**
-     * 打开红包 1.能抢，点击拆红包并退出页面 2.完成 2.1 没抢到，退出页面 2.2 抢过的，退出页面
+     * 打开红包
+     *  1.能抢，点击拆红包并退出页面
+     *  2.完成 
+     *  2.1 没抢到，退出页面
+     *  2.2 抢过的，退出页面
      */
     private void openPacketDetail() {
         final AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
