@@ -141,14 +141,7 @@ public class RobotService extends AccessibilityService {
         }
     }
 
-    /**
-     * toast提示
-     *
-     * @param msg
-     */
-    private void toast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
+
 
     /**
      * 获取红包列表

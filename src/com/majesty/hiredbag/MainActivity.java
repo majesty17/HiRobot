@@ -13,10 +13,12 @@ import android.view.View;
 import android.provider.Settings;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     private AccessibilityManager accessibilityManager;
     private Button clickBtn;
+    private TextView tv_info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         accessibilityManager = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
         clickBtn = (Button) findViewById(R.id.click_func);
+        tv_info=(TextView)findViewById(R.id.tv_info);
         clickBtn.setOnClickListener(this);
     }
 
@@ -64,8 +67,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         // 根据服务可用与否，调整按钮文字
         if (isServiceEnabled()) {
             clickBtn.setText("关闭辅助");
+            tv_info.setText("当前运行状态: 运行中~");
         } else {
             clickBtn.setText("打开辅助功能");
+            tv_info.setText("当前运行状态: 未运行");
         }
     };
 
