@@ -1,11 +1,8 @@
 package com.majesty.hiredbag;
 
 import android.accessibilityservice.AccessibilityService;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +11,6 @@ import com.majesty.hiredbag.model.Ids;
 import com.majesty.hiredbag.model.MessageType;
 import com.majesty.hiredbag.utils.LogUtils;
 import com.majesty.hiredbag.utils.NodeUtils;
-import com.majesty.hiredbag.utils.PowerUtil;
 
 /**
  * Created by pengwei on 16/2/2.
@@ -34,21 +30,16 @@ public class RobotService extends AccessibilityService {
     private int prevPackageCount = 0;
     // 当前activity的className
     private String currentClassName = getClass().toString();
-    // 熄屏管理
-    private PowerUtil power;
 
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-        power = new PowerUtil(this);
-        power.handleWakeLock(true);
     }
 
     /***
      * 这里监听三种类型的事件 主要逻辑: 
-     * 1,窗口内容变化 如果类名为聊天窗，则获取红包 如果诶名为联系人列表，则进入聊天
+     * 1,窗口内容变化 如果类名为聊天窗，则从聊天窗口获取红包 
      * 2,打开弹窗，菜单，对话框事件 如果是红包窗，则试图打开
-     * 3,通知栏事件 进入监听通知函数
      */
 
     @Override
@@ -59,8 +50,6 @@ public class RobotService extends AccessibilityService {
         case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
             if (currentClassName.equals(CHAT_CLASS_NAME)) {
                 getPacket();
-            } else if (currentClassName.equals(CONTACT_CLASS_NAME)) {
-                intoChat();
             }
             break;
         case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
@@ -69,51 +58,12 @@ public class RobotService extends AccessibilityService {
                 openPacketDetail();
             }
             break;
-        case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
-            listenerNotification(event);
-            break;
         default:
             break;
         }
     }
 
-    /**
-     * 监听通知栏变化
-     *
-     * @param event
-     */
-    private void listenerNotification(AccessibilityEvent event) {
-        List<CharSequence> texts = event.getText();
-        if (texts != null && !texts.isEmpty()) {
-            for (CharSequence text : texts) {
-                LogUtils.e("Get a Notification: " + text.toString());
-                if (text.toString().contains("[百度红包]")) {
-                    if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
-                        Notification notification = (Notification) event.getParcelableData();
-                        PendingIntent pendingIntent = notification.contentIntent;
-                        try {
-                            pendingIntent.send();
-                        } catch (PendingIntent.CanceledException e) {
-                            LogUtils.e(e);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
-    /**
-     * 进去聊天界面
-     */
-    private void intoChat() {
-        AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-        List<AccessibilityNodeInfo> messageList = rootNode.findAccessibilityNodeInfosByViewId(Ids.TEXT_VIEW_MESSAGE);
-        for (AccessibilityNodeInfo msgNode : messageList) {
-            if (msgNode.getText().toString().contains(": [百度红包]")) {
-                msgNode.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-            }
-        }
-    }
 
     /**
      * 打开红包
@@ -236,7 +186,6 @@ public class RobotService extends AccessibilityService {
 
     @Override
     public void onDestroy() {
-        power.handleWakeLock(false);
         super.onDestroy();
     }
 }

@@ -8,6 +8,7 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.provider.Settings;
@@ -68,9 +69,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (isServiceEnabled()) {
             clickBtn.setText("关闭辅助");
             tv_info.setText("当前运行状态: 运行中~");
+            tv_info.setTextColor(Color.GREEN);
         } else {
             clickBtn.setText("打开辅助功能");
             tv_info.setText("当前运行状态: 未运行");
+            tv_info.setTextColor(Color.RED);
         }
     };
 
